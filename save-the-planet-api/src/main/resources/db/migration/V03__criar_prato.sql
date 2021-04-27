@@ -1,0 +1,8 @@
+CREATE TABLE prato (
+	codigo BIGINT(20) PRIMARY KEY AUTO_INCREMENT,
+	descricao VARCHAR(50) NOT NULL,
+	valor DECIMAL(10,2) NOT NULL,
+	quantidade VARCHAR(50) NOT NULL,
+	codigo_usuario BIGINT(20) NOT NULL,
+	FOREIGN KEY (codigo_usuario) REFERENCES usuario(codigo)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;

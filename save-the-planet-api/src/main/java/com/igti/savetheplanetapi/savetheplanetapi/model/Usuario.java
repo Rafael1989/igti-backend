@@ -1,6 +1,7 @@
 package com.igti.savetheplanetapi.savetheplanetapi.model;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotNull;
 import java.util.List;
 
 @Entity
@@ -8,11 +9,18 @@ import java.util.List;
 public class Usuario {
 
 	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long codigo;
 
 	private String nome;
 	private String email;
 	private String senha;
+	private String cpf;
+
+	@NotNull
+	@ManyToOne
+	@JoinColumn(name = "codigo_perfil")
+	private Perfil perfil;
 
 	@ManyToMany(fetch = FetchType.EAGER)
 	@JoinTable(name = "usuario_permissao", joinColumns = @JoinColumn(name = "codigo_usuario")
@@ -57,6 +65,22 @@ public class Usuario {
 
 	public void setPermissoes(List<Permissao> permissoes) {
 		this.permissoes = permissoes;
+	}
+
+	public Perfil getPerfil() {
+		return perfil;
+	}
+
+	public void setPerfil(Perfil perfil) {
+		this.perfil = perfil;
+	}
+
+	public String getCpf() {
+		return cpf;
+	}
+
+	public void setCpf(String cpf) {
+		this.cpf = cpf;
 	}
 
 	@Override
