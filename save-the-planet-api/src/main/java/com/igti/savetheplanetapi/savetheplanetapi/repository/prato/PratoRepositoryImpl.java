@@ -59,15 +59,45 @@ public class PratoRepositoryImpl implements PratoRepositoryQuery {
 		return new PageImpl<>(query.getResultList(), pageable, total(pratoFilter, codigo));
 	}
 
+	@Override
+	public Page<ResumoPrato> resumir(PratoFilter pratoFilter, Pageable pageable) {
+		CriteriaBuilder builder = manager.getCriteriaBuilder();
+		CriteriaQuery<ResumoPrato> criteria = builder.createQuery(ResumoPrato.class);
+		Root<Prato> root = criteria.from(Prato.class);
+
+		criteria.select(builder.construct(ResumoPrato.class
+				, root.get(Prato_.codigo), root.get(Prato_.descricao)
+				, root.get(Prato_.valor), root.get(Prato_.quantidade)));
+
+		Predicate[] predicates = criarRestricoes(pratoFilter, builder, root);
+		criteria.where(predicates);
+
+		TypedQuery<ResumoPrato> query = manager.createQuery(criteria);
+		adicionarRestricoesDePaginacao(query, pageable);
+
+		return new PageImpl<>(query.getResultList(), pageable, total(pratoFilter));
+	}
+
 	private Predicate[] criarRestricoes(PratoFilter pratoFilter, CriteriaBuilder builder,
 										Root<Prato> root, Long codigo) {
 		List<Predicate> predicates = new ArrayList<>();
 
-		predicates.add(builder.equal(root.get(Prato_.usuario), codigo));
+		predicates.add(builder.equal(root.get(Prato_.cozinheira), codigo));
 		if (!StringUtils.isEmpty(pratoFilter.getDescricao())) {
 			predicates.add(builder.like(builder.lower(root.get(Prato_.descricao)), "%" + pratoFilter.getDescricao().toLowerCase() + "%"));
 		}
 		
+		return predicates.toArray(new Predicate[predicates.size()]);
+	}
+
+	private Predicate[] criarRestricoes(PratoFilter pratoFilter, CriteriaBuilder builder,
+										Root<Prato> root) {
+		List<Predicate> predicates = new ArrayList<>();
+
+		if (!StringUtils.isEmpty(pratoFilter.getDescricao())) {
+			predicates.add(builder.like(builder.lower(root.get(Prato_.descricao)), "%" + pratoFilter.getDescricao().toLowerCase() + "%"));
+		}
+
 		return predicates.toArray(new Predicate[predicates.size()]);
 	}
 
@@ -88,6 +118,18 @@ public class PratoRepositoryImpl implements PratoRepositoryQuery {
 		Predicate[] predicates = criarRestricoes(pratoFilter, builder, root, codigo);
 		criteria.where(predicates);
 		
+		criteria.select(builder.count(root));
+		return manager.createQuery(criteria).getSingleResult();
+	}
+
+	private Long total(PratoFilter pratoFilter) {
+		CriteriaBuilder builder = manager.getCriteriaBuilder();
+		CriteriaQuery<Long> criteria = builder.createQuery(Long.class);
+		Root<Prato> root = criteria.from(Prato.class);
+
+		Predicate[] predicates = criarRestricoes(pratoFilter, builder, root);
+		criteria.where(predicates);
+
 		criteria.select(builder.count(root));
 		return manager.createQuery(criteria).getSingleResult();
 	}

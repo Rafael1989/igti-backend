@@ -12,9 +12,9 @@ import org.springframework.stereotype.Service;
 import java.util.Optional;
 
 @Service
-public class PratoService {
+public class ClienteService {
 	
-	private static final Logger logger = LoggerFactory.getLogger(PratoService.class);
+	private static final Logger logger = LoggerFactory.getLogger(ClienteService.class);
 
 	@Autowired
 	private PratoRepository pratoRepository;
@@ -22,15 +22,12 @@ public class PratoService {
 	@Autowired
 	private UsuarioRepository usuarioRepository;
 	
-	public Prato salvar(Prato prato) {
-		prato.setStatus("DISPONÍVEL");
-		return pratoRepository.save(prato);
-	}
-
-	public Prato atualizar(Long codigo, Prato prato) {
+	public Prato comprar(Long codigo, Prato prato) {
 		Prato pratoSalvo = buscarPratoExistente(codigo);
 
-		BeanUtils.copyProperties(prato, pratoSalvo, "codigo");
+		pratoSalvo.setCliente(prato.getCliente());
+		pratoSalvo.setQuantidade(""+(Integer.parseInt(prato.getQuantidade()) - 1));
+		pratoSalvo.setStatus("COMPRADO");
 
 		return pratoRepository.save(pratoSalvo);
 	}

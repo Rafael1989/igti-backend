@@ -1,7 +1,7 @@
 package com.igti.savetheplanetapi.savetheplanetapi.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-
+import com.igti.savetheplanetapi.savetheplanetapi.model.Usuario;
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import java.math.BigDecimal;
@@ -18,6 +18,9 @@ public class Prato {
 	private String descricao;
 
 	@NotNull
+	private String status;
+
+	@NotNull
 	private BigDecimal valor;
 
 	@NotNull
@@ -25,8 +28,13 @@ public class Prato {
 
 	@NotNull
 	@ManyToOne
-	@JoinColumn(name = "codigo_usuario")
-	private Usuario usuario;
+	@JoinColumn(name = "codigo_cozinheira")
+	private Usuario cozinheira;
+
+	@ManyToOne
+	@JoinColumn(name = "codigo_cliente")
+	private Usuario cliente;
+
 
 	public Long getCodigo() {
 		return codigo;
@@ -42,6 +50,14 @@ public class Prato {
 
 	public void setDescricao(String descricao) {
 		this.descricao = descricao;
+	}
+
+	public String getStatus() {
+		return status;
+	}
+
+	public void setStatus(String status) {
+		this.status = status;
 	}
 
 	public BigDecimal getValor() {
@@ -60,12 +76,20 @@ public class Prato {
 		this.quantidade = quantidade;
 	}
 
-	public Usuario getUsuario() {
-		return usuario;
+	public Usuario getCozinheira() {
+		return cozinheira;
 	}
 
-	public void setUsuario(Usuario usuario) {
-		this.usuario = usuario;
+	public void setCozinheira(Usuario cozinheira) {
+		this.cozinheira = cozinheira;
+	}
+
+	public Usuario getCliente() {
+		return cliente;
+	}
+
+	public void setCliente(Usuario cliente) {
+		this.cliente = cliente;
 	}
 
 	@Override
