@@ -35,6 +35,9 @@ public class Prato {
 	@JoinColumn(name = "codigo_cliente")
 	private Usuario cliente;
 
+	@ManyToOne
+	@JoinColumn(name = "codigo_entregador")
+	private Usuario entregador;
 
 	public Long getCodigo() {
 		return codigo;
@@ -90,6 +93,14 @@ public class Prato {
 
 	public void setCliente(Usuario cliente) {
 		this.cliente = cliente;
+	}
+
+	public Usuario getEntregador() {
+		return entregador;
+	}
+
+	public void setEntregador(Usuario entregador) {
+		this.entregador = entregador;
 	}
 
 	@Override

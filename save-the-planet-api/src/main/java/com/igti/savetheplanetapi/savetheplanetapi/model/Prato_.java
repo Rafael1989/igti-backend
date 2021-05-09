@@ -16,6 +16,7 @@ public abstract class Prato_ {
 	public static volatile SingularAttribute<com.igti.savetheplanetapi.savetheplanetapi.model.Prato, String> quantidade;
 	public static volatile SingularAttribute<com.igti.savetheplanetapi.savetheplanetapi.model.Prato, Usuario> cozinheira;
 	public static volatile SingularAttribute<com.igti.savetheplanetapi.savetheplanetapi.model.Prato, Usuario> cliente;
+	public static volatile SingularAttribute<com.igti.savetheplanetapi.savetheplanetapi.model.Prato, Usuario> entregador;
 
 }
 

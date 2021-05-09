@@ -5,16 +5,15 @@ import com.igti.savetheplanetapi.savetheplanetapi.repository.PratoRepository;
 import com.igti.savetheplanetapi.savetheplanetapi.repository.UsuarioRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
 
 @Service
-public class PratoService {
+public class EntregadorService {
 	
-	private static final Logger logger = LoggerFactory.getLogger(PratoService.class);
+	private static final Logger logger = LoggerFactory.getLogger(EntregadorService.class);
 
 	@Autowired
 	private PratoRepository pratoRepository;
@@ -22,15 +21,19 @@ public class PratoService {
 	@Autowired
 	private UsuarioRepository usuarioRepository;
 	
-	public Prato salvar(Prato prato) {
-		prato.setStatus("DISPONÍVEL");
-		return pratoRepository.save(prato);
-	}
-
-	public Prato atualizar(Long codigo, Prato prato) {
+	public Prato entregar(Long codigo, Prato prato) {
 		Prato pratoSalvo = buscarPratoExistente(codigo);
 
-		BeanUtils.copyProperties(prato, pratoSalvo, "codigo");
+		pratoSalvo.setEntregador(prato.getEntregador());
+		pratoSalvo.setStatus("ENTREGANDO");
+
+		return pratoRepository.save(pratoSalvo);
+	}
+
+	public Prato pagar(Long codigo, Prato prato) {
+		Prato pratoSalvo = buscarPratoExistente(codigo);
+
+		pratoSalvo.setStatus("PAGO");
 
 		return pratoRepository.save(pratoSalvo);
 	}
@@ -41,14 +44,6 @@ public class PratoService {
 			throw new IllegalArgumentException();
 		}
 		return pratoSalvo.get();
-	}
-
-	public Prato pronto(Long codigo, Prato prato) {
-		Prato pratoSalvo = buscarPratoExistente(codigo);
-
-		pratoSalvo.setStatus("PRONTO");
-
-		return pratoRepository.save(pratoSalvo);
 	}
 
 }

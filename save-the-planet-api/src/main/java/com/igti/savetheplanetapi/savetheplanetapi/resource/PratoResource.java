@@ -80,5 +80,16 @@ public class PratoResource {
 			return ResponseEntity.notFound().build();
 		}
 	}
+
+	@PutMapping("/pronto/{codigo}")
+	@PreAuthorize("hasAuthority('ROLE_COZINHEIRA') or hasAuthority('ROLE_ADMIN')")
+	public ResponseEntity<Prato> pronto(@PathVariable Long codigo, @Valid @RequestBody Prato prato) {
+		try {
+			Prato pratoSalvo = pratoService.pronto(codigo, prato);
+			return ResponseEntity.ok(pratoSalvo);
+		} catch (IllegalArgumentException e) {
+			return ResponseEntity.notFound().build();
+		}
+	}
 	
 }

@@ -35,7 +35,7 @@ public class ClienteResource {
 	@GetMapping(value = "/resumir", params = {"resumo"})
 	@PreAuthorize("hasAuthority('ROLE_CLIENTE') or hasAuthority('ROLE_ADMIN')")
 	public Page<ResumoPrato> resumir(PratoFilter pratoFilter, Pageable pageable) {
-		return pratoRepository.resumir(pratoFilter, pageable);
+		return pratoRepository.resumirParaCliente(pratoFilter, pageable);
 	}
 	
 	@PutMapping("/{codigo}")
