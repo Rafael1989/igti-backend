@@ -35,6 +35,16 @@ public class PratoService {
 		return pratoRepository.save(pratoSalvo);
 	}
 
+	public Prato atualizarAdmin(Long codigo, Prato prato) {
+		Prato pratoSalvo = buscarPratoExistente(codigo);
+
+		pratoSalvo.setDescricao(prato.getDescricao());
+		pratoSalvo.setQuantidade(prato.getQuantidade());
+		pratoSalvo.setValor(prato.getValor());
+
+		return pratoRepository.save(pratoSalvo);
+	}
+
 	private Prato buscarPratoExistente(Long codigo) {
 		Optional<Prato> pratoSalvo = pratoRepository.findById(codigo);
 		if (!pratoSalvo.isPresent()) {

@@ -27,6 +27,18 @@ public class Usuario {
 		, inverseJoinColumns = @JoinColumn(name = "codigo_permissao"))
 	private List<Permissao> permissoes;
 
+	public Usuario() {
+	}
+
+	public Usuario(Long codigo, String nome, String email, String senha, String cpf, Perfil perfil) {
+		this.codigo = codigo;
+		this.nome = nome;
+		this.email = email;
+		this.senha = senha;
+		this.cpf = cpf;
+		this.perfil = perfil;
+	}
+
 	public Long getCodigo() {
 		return codigo;
 	}

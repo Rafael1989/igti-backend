@@ -10,6 +10,7 @@ public interface PratoRepositoryQuery {
 	
 	public Page<Prato> filtrar(PratoFilter pratoFilter, Pageable pageable, Long codigo);
 	public Page<ResumoPrato> resumir(PratoFilter pratoFilter, Pageable pageable, Long codigo);
+	public Page<ResumoPrato> resumirParaAdmin(PratoFilter pratoFilter, Pageable pageable);
 	public Page<ResumoPrato> resumirParaCliente(PratoFilter pratoFilter, Pageable pageable);
 	public Page<ResumoPrato> resumirParaEntregador(PratoFilter pratoFilter, Pageable pageable, Long codigo);
 	

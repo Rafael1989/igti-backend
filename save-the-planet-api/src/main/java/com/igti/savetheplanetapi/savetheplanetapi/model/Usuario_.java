@@ -13,7 +13,9 @@ public abstract class Usuario_ {
 	public static volatile ListAttribute<Usuario, Permissao> permissoes;
 	public static volatile SingularAttribute<Usuario, Long> codigo;
 	public static volatile SingularAttribute<Usuario, String> nome;
+	public static volatile SingularAttribute<Usuario, String> cpf;
 	public static volatile SingularAttribute<Usuario, String> email;
+	public static volatile SingularAttribute<Usuario, Perfil> perfil;
 
 }
 
