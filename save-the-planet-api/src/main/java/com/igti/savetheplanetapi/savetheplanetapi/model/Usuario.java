@@ -22,6 +22,18 @@ public class Usuario {
 	@JoinColumn(name = "codigo_perfil")
 	private Perfil perfil;
 
+	@ManyToOne
+	@JoinColumn(name = "codigo_cidade")
+	private Cidade cidade;
+
+	private String bairro;
+
+	private String rua;
+
+	private String numero;
+
+	private String complemento;
+
 	@ManyToMany(fetch = FetchType.EAGER)
 	@JoinTable(name = "usuario_permissao", joinColumns = @JoinColumn(name = "codigo_usuario")
 		, inverseJoinColumns = @JoinColumn(name = "codigo_permissao"))
@@ -30,13 +42,18 @@ public class Usuario {
 	public Usuario() {
 	}
 
-	public Usuario(Long codigo, String nome, String email, String senha, String cpf, Perfil perfil) {
+	public Usuario(Long codigo, String nome, String email, String senha, String cpf, Perfil perfil, Cidade cidade, String bairro, String rua, String numero, String complemento) {
 		this.codigo = codigo;
 		this.nome = nome;
 		this.email = email;
 		this.senha = senha;
 		this.cpf = cpf;
 		this.perfil = perfil;
+		this.cidade = cidade;
+		this.bairro = bairro;
+		this.rua = rua;
+		this.numero = numero;
+		this.complemento = complemento;
 	}
 
 	public Long getCodigo() {
@@ -93,6 +110,46 @@ public class Usuario {
 
 	public void setCpf(String cpf) {
 		this.cpf = cpf;
+	}
+
+	public Cidade getCidade() {
+		return cidade;
+	}
+
+	public void setCidade(Cidade cidade) {
+		this.cidade = cidade;
+	}
+
+	public String getBairro() {
+		return bairro;
+	}
+
+	public void setBairro(String bairro) {
+		this.bairro = bairro;
+	}
+
+	public String getRua() {
+		return rua;
+	}
+
+	public void setRua(String rua) {
+		this.rua = rua;
+	}
+
+	public String getNumero() {
+		return numero;
+	}
+
+	public void setNumero(String numero) {
+		this.numero = numero;
+	}
+
+	public String getComplemento() {
+		return complemento;
+	}
+
+	public void setComplemento(String complemento) {
+		this.complemento = complemento;
 	}
 
 	@Override

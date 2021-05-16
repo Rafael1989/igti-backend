@@ -1,28 +1,15 @@
 package com.igti.savetheplanetapi.savetheplanetapi.model;
 
 import javax.persistence.*;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
 
 @Entity
-@Table(name = "perfil")
-public class Perfil {
-
+@Table(name = "pais")
+public class Pais {
+	
 	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long codigo;
-
-	@NotNull
-	@Size(min = 3, max = 20)
+	
 	private String nome;
-
-	public Perfil(Long codigo, String nome) {
-		this.codigo = codigo;
-		this.nome = nome;
-	}
-
-	public Perfil() {
-	}
 
 	public Long getCodigo() {
 		return codigo;
@@ -56,7 +43,7 @@ public class Perfil {
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
-		Perfil other = (Perfil) obj;
+		Pais other = (Pais) obj;
 		if (codigo == null) {
 			if (other.codigo != null)
 				return false;
@@ -64,5 +51,4 @@ public class Perfil {
 			return false;
 		return true;
 	}
-
 }
