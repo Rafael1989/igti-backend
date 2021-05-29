@@ -59,7 +59,7 @@ public class UsuarioRepositoryImpl implements UsuarioRepositoryQuery {
 		
 		criteria.select(builder.construct(Usuario.class, root.get(Usuario_.codigo)
 				, root.get(Usuario_.nome), root.get(Usuario_.email)
-				, root.get(Usuario_.senha), root.get(Usuario_.cpf), root.get(Usuario_.perfil)));
+				, root.get(Usuario_.senha), root.get(Usuario_.cpf), root.get(Usuario_.perfil), root.get(Usuario_.cidade), root.get(Usuario_.bairro), root.get(Usuario_.rua), root.get(Usuario_.numero), root.get(Usuario_.complemento)));
 
 		Predicate[] predicates = criarRestricoes(usuario, builder, root);
 		criteria.where(predicates);

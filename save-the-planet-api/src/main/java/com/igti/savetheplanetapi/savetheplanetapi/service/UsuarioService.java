@@ -12,6 +12,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.Arrays;
+import java.util.LinkedList;
 import java.util.Optional;
 
 @Service
@@ -43,6 +44,11 @@ public class UsuarioService {
 		Usuario usuarioSalvo = buscarUsuarioExistente(codigo);
 
 		BeanUtils.copyProperties(usuario, usuarioSalvo, "codigo");
+		BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
+		usuarioSalvo.setSenha(encoder.encode(usuario.getSenha()));
+		Permissao permissao = new Permissao();
+		permissao.setCodigo(usuario.getPerfil().getCodigo());
+		usuarioSalvo.setPermissoes(new LinkedList<>(Arrays.asList(permissao)));
 
 		return usuarioRepository.save(usuarioSalvo);
 	}
