@@ -18,9 +18,6 @@ public class Prato {
 	private String descricao;
 
 	@NotNull
-	private String status;
-
-	@NotNull
 	private BigDecimal valor;
 
 	@NotNull
@@ -30,14 +27,6 @@ public class Prato {
 	@ManyToOne
 	@JoinColumn(name = "codigo_cozinheira")
 	private Usuario cozinheira;
-
-	@ManyToOne
-	@JoinColumn(name = "codigo_cliente")
-	private Usuario cliente;
-
-	@ManyToOne
-	@JoinColumn(name = "codigo_entregador")
-	private Usuario entregador;
 
 	public Long getCodigo() {
 		return codigo;
@@ -53,14 +42,6 @@ public class Prato {
 
 	public void setDescricao(String descricao) {
 		this.descricao = descricao;
-	}
-
-	public String getStatus() {
-		return status;
-	}
-
-	public void setStatus(String status) {
-		this.status = status;
 	}
 
 	public BigDecimal getValor() {
@@ -85,22 +66,6 @@ public class Prato {
 
 	public void setCozinheira(Usuario cozinheira) {
 		this.cozinheira = cozinheira;
-	}
-
-	public Usuario getCliente() {
-		return cliente;
-	}
-
-	public void setCliente(Usuario cliente) {
-		this.cliente = cliente;
-	}
-
-	public Usuario getEntregador() {
-		return entregador;
-	}
-
-	public void setEntregador(Usuario entregador) {
-		this.entregador = entregador;
 	}
 
 	@Override

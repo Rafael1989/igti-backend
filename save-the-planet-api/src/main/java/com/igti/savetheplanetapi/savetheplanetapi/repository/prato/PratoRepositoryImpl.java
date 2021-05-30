@@ -147,9 +147,6 @@ public class PratoRepositoryImpl implements PratoRepositoryQuery {
 		Predicate statusPronto = builder.equal(builder.lower(root.get(Prato_.status)), status.get(0));
 		Predicate statusEntregando = builder.equal(builder.lower(root.get(Prato_.status)), status.get(1));
 		predicates.add(builder.or(statusEntregando, statusPronto));
-		Predicate codigoEntregador = builder.equal(root.get(Prato_.entregador), codigo);
-		Predicate codigoNull = builder.isNull(root.get(Prato_.entregador));
-		predicates.add(builder.or(codigoEntregador, codigoNull));
 
 		if (!StringUtils.isEmpty(pratoFilter.getDescricao())) {
 			predicates.add(builder.like(builder.lower(root.get(Prato_.descricao)), "%" + pratoFilter.getDescricao().toLowerCase() + "%"));

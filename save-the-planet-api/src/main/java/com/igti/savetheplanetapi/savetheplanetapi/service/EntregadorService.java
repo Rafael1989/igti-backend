@@ -24,7 +24,6 @@ public class EntregadorService {
 	public Prato entregar(Long codigo, Prato prato) {
 		Prato pratoSalvo = buscarPratoExistente(codigo);
 
-		pratoSalvo.setEntregador(prato.getEntregador());
 		pratoSalvo.setStatus("ENTREGANDO");
 
 		return pratoRepository.save(pratoSalvo);

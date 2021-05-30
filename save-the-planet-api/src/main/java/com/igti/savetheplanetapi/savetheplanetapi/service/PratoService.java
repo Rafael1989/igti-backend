@@ -30,7 +30,7 @@ public class PratoService {
 	public Prato atualizar(Long codigo, Prato prato) {
 		Prato pratoSalvo = buscarPratoExistente(codigo);
 
-		BeanUtils.copyProperties(prato, pratoSalvo, "codigo");
+		BeanUtils.copyProperties(prato, pratoSalvo, "codigo", "cozinheira", "status");
 
 		return pratoRepository.save(pratoSalvo);
 	}
