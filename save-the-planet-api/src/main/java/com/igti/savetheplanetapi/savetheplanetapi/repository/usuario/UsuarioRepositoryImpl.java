@@ -1,9 +1,6 @@
 package com.igti.savetheplanetapi.savetheplanetapi.repository.usuario;
 
-import com.igti.savetheplanetapi.savetheplanetapi.model.Prato;
-import com.igti.savetheplanetapi.savetheplanetapi.model.Prato_;
-import com.igti.savetheplanetapi.savetheplanetapi.model.Usuario;
-import com.igti.savetheplanetapi.savetheplanetapi.model.Usuario_;
+import com.igti.savetheplanetapi.savetheplanetapi.model.*;
 import com.igti.savetheplanetapi.savetheplanetapi.repository.filter.PratoFilter;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -50,6 +47,20 @@ public class UsuarioRepositoryImpl implements UsuarioRepositoryQuery {
 
 		return predicates.toArray(new Predicate[predicates.size()]);
 	}
+
+	private Predicate[] criarRestricoesCozinheiras(Usuario usuario, CriteriaBuilder builder,
+										Root<Usuario> root) {
+		List<Predicate> predicates = new ArrayList<>();
+		Perfil perfil = new Perfil();
+		perfil.setCodigo(2L);
+		predicates.add(builder.equal(root.get(Usuario_.perfil), perfil));
+
+		if (!StringUtils.isEmpty(usuario.getNome())) {
+			predicates.add(builder.like(builder.lower(root.get(Usuario_.nome)), "%" + usuario.getNome().toLowerCase() + "%"));
+		}
+
+		return predicates.toArray(new Predicate[predicates.size()]);
+	}
 	
 	@Override
 	public Page<Usuario> resumir(Usuario usuario, Pageable pageable) {
@@ -70,6 +81,25 @@ public class UsuarioRepositoryImpl implements UsuarioRepositoryQuery {
 		return new PageImpl<>(query.getResultList(), pageable, total());
 	}
 
+	@Override
+	public Page<Usuario> resumirCozinheiras(Usuario usuario, Pageable pageable) {
+		CriteriaBuilder builder = manager.getCriteriaBuilder();
+		CriteriaQuery<Usuario> criteria = builder.createQuery(Usuario.class);
+		Root<Usuario> root = criteria.from(Usuario.class);
+
+		criteria.select(builder.construct(Usuario.class, root.get(Usuario_.codigo)
+				, root.get(Usuario_.nome), root.get(Usuario_.email)
+				, root.get(Usuario_.senha), root.get(Usuario_.cpf), root.get(Usuario_.perfil), root.get(Usuario_.cidade), root.get(Usuario_.bairro), root.get(Usuario_.rua), root.get(Usuario_.numero), root.get(Usuario_.complemento)));
+
+		Predicate[] predicates = criarRestricoesCozinheiras(usuario, builder, root);
+		criteria.where(predicates);
+
+		TypedQuery<Usuario> query = manager.createQuery(criteria);
+		adicionarRestricoesDePaginacao(query, pageable);
+
+		return new PageImpl<>(query.getResultList(), pageable, totalCozinheiras(usuario));
+	}
+
 	private void adicionarRestricoesDePaginacao(TypedQuery<?> query, Pageable pageable) {
 		int paginaAtual = pageable.getPageNumber();
 		int totalRegistrosPorPagina = pageable.getPageSize();
@@ -84,6 +114,18 @@ public class UsuarioRepositoryImpl implements UsuarioRepositoryQuery {
 		CriteriaQuery<Long> criteria = builder.createQuery(Long.class);
 		Root<Usuario> root = criteria.from(Usuario.class);
 		
+		criteria.select(builder.count(root));
+		return manager.createQuery(criteria).getSingleResult();
+	}
+
+	private Long totalCozinheiras(Usuario usuario) {
+		CriteriaBuilder builder = manager.getCriteriaBuilder();
+		CriteriaQuery<Long> criteria = builder.createQuery(Long.class);
+		Root<Usuario> root = criteria.from(Usuario.class);
+
+		Predicate[] predicates = criarRestricoesCozinheiras(usuario, builder, root);
+		criteria.where(predicates);
+
 		criteria.select(builder.count(root));
 		return manager.createQuery(criteria).getSingleResult();
 	}

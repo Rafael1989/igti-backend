@@ -2,6 +2,7 @@ package com.igti.savetheplanetapi.savetheplanetapi.repository.prato;
 
 import com.igti.savetheplanetapi.savetheplanetapi.model.Prato;
 import com.igti.savetheplanetapi.savetheplanetapi.model.Prato_;
+import com.igti.savetheplanetapi.savetheplanetapi.model.Usuario;
 import com.igti.savetheplanetapi.savetheplanetapi.repository.filter.PratoFilter;
 import com.igti.savetheplanetapi.savetheplanetapi.repository.projection.ResumoPrato;
 import org.springframework.data.domain.Page;
@@ -49,7 +50,7 @@ public class PratoRepositoryImpl implements PratoRepositoryQuery {
 		
 		criteria.select(builder.construct(ResumoPrato.class
 				, root.get(Prato_.codigo), root.get(Prato_.descricao)
-				, root.get(Prato_.valor), root.get(Prato_.quantidade), root.get(Prato_.status)));
+				, root.get(Prato_.valor), root.get(Prato_.quantidade)));
 		
 		Predicate[] predicates = criarRestricoes(pratoFilter, builder, root, codigo);
 		criteria.where(predicates);
@@ -61,22 +62,22 @@ public class PratoRepositoryImpl implements PratoRepositoryQuery {
 	}
 
 	@Override
-	public Page<ResumoPrato> resumirParaCliente(PratoFilter pratoFilter, Pageable pageable) {
+	public Page<ResumoPrato> resumirParaCliente(PratoFilter pratoFilter, Pageable pageable, Long codigo) {
 		CriteriaBuilder builder = manager.getCriteriaBuilder();
 		CriteriaQuery<ResumoPrato> criteria = builder.createQuery(ResumoPrato.class);
 		Root<Prato> root = criteria.from(Prato.class);
 
 		criteria.select(builder.construct(ResumoPrato.class
 				, root.get(Prato_.codigo), root.get(Prato_.descricao)
-				, root.get(Prato_.valor), root.get(Prato_.quantidade), root.get(Prato_.status)));
+				, root.get(Prato_.valor), root.get(Prato_.quantidade)));
 
-		Predicate[] predicates = criarRestricoesCliente(pratoFilter, builder, root, Arrays.asList("DISPONÍVEL"));
+		Predicate[] predicates = criarRestricoesCliente(pratoFilter, builder, root, codigo);
 		criteria.where(predicates);
 
 		TypedQuery<ResumoPrato> query = manager.createQuery(criteria);
 		adicionarRestricoesDePaginacao(query, pageable);
 
-		return new PageImpl<>(query.getResultList(), pageable, totalCliente(pratoFilter, Arrays.asList("DISPONÍVEL")));
+		return new PageImpl<>(query.getResultList(), pageable, totalCliente(pratoFilter, codigo));
 	}
 
 	@Override
@@ -87,7 +88,7 @@ public class PratoRepositoryImpl implements PratoRepositoryQuery {
 
 		criteria.select(builder.construct(ResumoPrato.class
 				, root.get(Prato_.codigo), root.get(Prato_.descricao)
-				, root.get(Prato_.valor), root.get(Prato_.quantidade), root.get(Prato_.status)));
+				, root.get(Prato_.valor), root.get(Prato_.quantidade)));
 
 		Predicate[] predicates = criarRestricoesAdmin(pratoFilter, builder, root);
 		criteria.where(predicates);
@@ -106,7 +107,7 @@ public class PratoRepositoryImpl implements PratoRepositoryQuery {
 
 		criteria.select(builder.construct(ResumoPrato.class
 				, root.get(Prato_.codigo), root.get(Prato_.descricao)
-				, root.get(Prato_.valor), root.get(Prato_.quantidade), root.get(Prato_.status)));
+				, root.get(Prato_.valor), root.get(Prato_.quantidade)));
 
 		Predicate[] predicates = criarRestricoesEntregador(pratoFilter, builder, root, Arrays.asList("PRONTO", "ENTREGANDO"), codigo);
 		criteria.where(predicates);
@@ -144,9 +145,9 @@ public class PratoRepositoryImpl implements PratoRepositoryQuery {
 										Root<Prato> root, List<String> status, Long codigo) {
 		List<Predicate> predicates = new ArrayList<>();
 
-		Predicate statusPronto = builder.equal(builder.lower(root.get(Prato_.status)), status.get(0));
-		Predicate statusEntregando = builder.equal(builder.lower(root.get(Prato_.status)), status.get(1));
-		predicates.add(builder.or(statusEntregando, statusPronto));
+//		Predicate statusPronto = builder.equal(builder.lower(root.get(Prato_.status)), status.get(0));
+//		Predicate statusEntregando = builder.equal(builder.lower(root.get(Prato_.status)), status.get(1));
+//		predicates.add(builder.or(statusEntregando, statusPronto));
 
 		if (!StringUtils.isEmpty(pratoFilter.getDescricao())) {
 			predicates.add(builder.like(builder.lower(root.get(Prato_.descricao)), "%" + pratoFilter.getDescricao().toLowerCase() + "%"));
@@ -156,10 +157,12 @@ public class PratoRepositoryImpl implements PratoRepositoryQuery {
 	}
 
 	private Predicate[] criarRestricoesCliente(PratoFilter pratoFilter, CriteriaBuilder builder,
-												  Root<Prato> root, List<String> status) {
+												  Root<Prato> root, Long codigo) {
 		List<Predicate> predicates = new ArrayList<>();
 
-		predicates.add(builder.equal(builder.lower(root.get(Prato_.status)), status.get(0)));
+		Usuario usuario = new Usuario();
+		usuario.setCodigo(codigo);
+		predicates.add(builder.equal(root.get(Prato_.cozinheira), usuario));
 
 		if (!StringUtils.isEmpty(pratoFilter.getDescricao())) {
 			predicates.add(builder.like(builder.lower(root.get(Prato_.descricao)), "%" + pratoFilter.getDescricao().toLowerCase() + "%"));
@@ -189,12 +192,12 @@ public class PratoRepositoryImpl implements PratoRepositoryQuery {
 		return manager.createQuery(criteria).getSingleResult();
 	}
 
-	private Long totalCliente(PratoFilter pratoFilter, List<String> status) {
+	private Long totalCliente(PratoFilter pratoFilter, Long codigo) {
 		CriteriaBuilder builder = manager.getCriteriaBuilder();
 		CriteriaQuery<Long> criteria = builder.createQuery(Long.class);
 		Root<Prato> root = criteria.from(Prato.class);
 
-		Predicate[] predicates = criarRestricoesCliente(pratoFilter, builder, root, status);
+		Predicate[] predicates = criarRestricoesCliente(pratoFilter, builder, root, codigo);
 		criteria.where(predicates);
 
 		criteria.select(builder.count(root));

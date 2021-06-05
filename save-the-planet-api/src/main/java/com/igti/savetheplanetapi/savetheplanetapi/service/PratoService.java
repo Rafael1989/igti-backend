@@ -23,7 +23,7 @@ public class PratoService {
 	private UsuarioRepository usuarioRepository;
 	
 	public Prato salvar(Prato prato) {
-		prato.setStatus("DISPONÍVEL");
+//		prato.setStatus("DISPONÍVEL");
 		return pratoRepository.save(prato);
 	}
 
@@ -56,7 +56,7 @@ public class PratoService {
 	public Prato pronto(Long codigo, Prato prato) {
 		Prato pratoSalvo = buscarPratoExistente(codigo);
 
-		pratoSalvo.setStatus("PRONTO");
+//		pratoSalvo.setStatus("PRONTO");
 
 		return pratoRepository.save(pratoSalvo);
 	}

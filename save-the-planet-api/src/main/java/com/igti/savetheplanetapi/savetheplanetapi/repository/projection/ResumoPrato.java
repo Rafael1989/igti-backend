@@ -8,14 +8,12 @@ public class ResumoPrato {
 	private String descricao;
 	private BigDecimal valor;
 	private String quantidade;
-	private String status;
 
-	public ResumoPrato(Long codigo, String descricao, BigDecimal valor, String quantidade, String status) {
+	public ResumoPrato(Long codigo, String descricao, BigDecimal valor, String quantidade) {
 		this.codigo = codigo;
 		this.descricao = descricao;
 		this.valor = valor;
 		this.quantidade = quantidade;
-		this.status = status;
 	}
 
 	public Long getCodigo() {
@@ -50,11 +48,4 @@ public class ResumoPrato {
 		this.quantidade = quantidade;
 	}
 
-	public String getStatus() {
-		return status;
-	}
-
-	public void setStatus(String status) {
-		this.status = status;
-	}
 }

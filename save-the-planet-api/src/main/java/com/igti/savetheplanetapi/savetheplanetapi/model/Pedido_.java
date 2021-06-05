@@ -4,6 +4,7 @@ import javax.annotation.Generated;
 import javax.persistence.metamodel.ListAttribute;
 import javax.persistence.metamodel.SingularAttribute;
 import javax.persistence.metamodel.StaticMetamodel;
+import java.util.List;
 
 @Generated(value = "org.hibernate.jpamodelgen.JPAMetaModelEntityProcessor")
 @StaticMetamodel(Pedido.class)
@@ -13,7 +14,7 @@ public abstract class Pedido_ {
 	public static volatile SingularAttribute<Pedido, String> status;
 	public static volatile SingularAttribute<Pedido, Usuario> cliente;
 	public static volatile SingularAttribute<Pedido, Usuario> entregador;
-	public static volatile ListAttribute<Pedido, Prato> pratos;
+	public static volatile ListAttribute<Pedido, List<Prato>> pratos;
 
 }
 

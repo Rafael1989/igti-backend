@@ -8,5 +8,6 @@ public interface UsuarioRepositoryQuery {
 
 	public Page<Usuario> filtrar(Usuario usuario, Pageable pageable);
 	public Page<Usuario> resumir(Usuario usuario, Pageable pageable);
+	public Page<Usuario> resumirCozinheiras(Usuario usuario, Pageable pageable);
 
 }

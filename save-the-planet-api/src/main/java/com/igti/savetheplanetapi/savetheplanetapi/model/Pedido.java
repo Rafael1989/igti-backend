@@ -5,11 +5,12 @@ import org.hibernate.annotations.LazyCollectionOption;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
+import java.io.Serializable;
 import java.util.List;
 
 @Entity
 @Table(name = "pedido")
-public class Pedido {
+public class Pedido implements Serializable {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -30,6 +31,17 @@ public class Pedido {
 	@JoinTable(name = "pedido_prato", joinColumns = @JoinColumn(name = "codigo_pedido")
 		, inverseJoinColumns = @JoinColumn(name = "codigo_prato"))
 	private List<Prato> pratos;
+
+	public Pedido() {
+	}
+
+	public Pedido(Long codigo, String status, Usuario cliente, Usuario entregador, List<Prato> pratos) {
+		this.codigo = codigo;
+		this.status = status;
+		this.cliente = cliente;
+		this.entregador = entregador;
+		this.pratos = pratos;
+	}
 
 	public Long getCodigo() {
 		return codigo;

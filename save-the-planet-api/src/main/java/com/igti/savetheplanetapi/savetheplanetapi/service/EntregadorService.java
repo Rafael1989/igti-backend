@@ -24,7 +24,7 @@ public class EntregadorService {
 	public Prato entregar(Long codigo, Prato prato) {
 		Prato pratoSalvo = buscarPratoExistente(codigo);
 
-		pratoSalvo.setStatus("ENTREGANDO");
+//		pratoSalvo.setStatus("ENTREGANDO");
 
 		return pratoRepository.save(pratoSalvo);
 	}
@@ -32,7 +32,7 @@ public class EntregadorService {
 	public Prato pagar(Long codigo, Prato prato) {
 		Prato pratoSalvo = buscarPratoExistente(codigo);
 
-		pratoSalvo.setStatus("PAGO");
+//		pratoSalvo.setStatus("PAGO");
 
 		return pratoRepository.save(pratoSalvo);
 	}

@@ -8,9 +8,13 @@ import com.igti.savetheplanetapi.savetheplanetapi.repository.PedidoRepository;
 import com.igti.savetheplanetapi.savetheplanetapi.repository.PratoRepository;
 import com.igti.savetheplanetapi.savetheplanetapi.repository.UsuarioRepository;
 import com.igti.savetheplanetapi.savetheplanetapi.repository.VendaRepository;
+import com.igti.savetheplanetapi.savetheplanetapi.repository.filter.PratoFilter;
+import com.igti.savetheplanetapi.savetheplanetapi.repository.projection.ResumoPrato;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
@@ -29,7 +33,26 @@ public class ClienteService {
 	private PratoRepository pratoRepository;
 
 	@Autowired
+	private UsuarioRepository usuarioRepository;
+
+	@Autowired
 	private VendaRepository vendaRepository;
+
+	public Page<ResumoPrato> resumirParaCliente(PratoFilter pratoFilter, Pageable pageable, Long codigo){
+		return pratoRepository.resumirParaCliente(pratoFilter, pageable, codigo);
+	}
+
+	public Page<Usuario> resumirCozinheiras(Usuario usuario, Pageable pageable){
+		return usuarioRepository.resumirCozinheiras(usuario, pageable);
+	}
+
+	public Page<Pedido> resumirPedidos(Pedido pedido, Pageable pageable, Long codigo){
+		return pedidoRepository.resumirPedidos(pedido, pageable, codigo);
+	}
+
+	public Page<Venda> resumirVendas(Venda venda, Pageable pageable, Long codigo){
+		return vendaRepository.resumirVendas(venda, pageable, codigo);
+	}
 	
 	public Pedido comprar(List<Prato> pratos, Long codigo) throws IllegalArgumentException{
 
