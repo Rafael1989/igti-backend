@@ -8,5 +8,6 @@ import org.springframework.data.domain.Pageable;
 public interface VendaRepositoryQuery {
 	
 	public Page<Venda> resumirVendas(Venda venda, Pageable pageable, Long codigo);
+	public Page<Venda> resumirVendasCozinheira(Venda venda, Pageable pageable, Long codigo);
 
 }

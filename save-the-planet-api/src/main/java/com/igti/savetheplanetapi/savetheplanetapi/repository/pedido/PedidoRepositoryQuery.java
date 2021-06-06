@@ -10,5 +10,6 @@ import org.springframework.data.domain.Pageable;
 public interface PedidoRepositoryQuery {
 	
 	public Page<Pedido> resumirPedidos(Pedido pedido, Pageable pageable, Long codigo);
+	public Page<Pedido> resumirPedidosCozinheira(Pedido pedido, Pageable pageable, Long codigo);
 
 }

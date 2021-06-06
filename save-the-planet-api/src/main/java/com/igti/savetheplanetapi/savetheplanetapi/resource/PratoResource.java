@@ -1,7 +1,9 @@
 package com.igti.savetheplanetapi.savetheplanetapi.resource;
 
 import com.igti.savetheplanetapi.savetheplanetapi.event.RecursoCriadoEvent;
+import com.igti.savetheplanetapi.savetheplanetapi.model.Pedido;
 import com.igti.savetheplanetapi.savetheplanetapi.model.Prato;
+import com.igti.savetheplanetapi.savetheplanetapi.model.Venda;
 import com.igti.savetheplanetapi.savetheplanetapi.repository.PratoRepository;
 import com.igti.savetheplanetapi.savetheplanetapi.repository.filter.PratoFilter;
 import com.igti.savetheplanetapi.savetheplanetapi.repository.projection.ResumoPrato;
@@ -83,13 +85,25 @@ public class PratoResource {
 
 	@PutMapping("/pronto/{codigo}")
 	@PreAuthorize("hasAuthority('ROLE_COZINHEIRA') or hasAuthority('ROLE_ADMIN')")
-	public ResponseEntity<Prato> pronto(@PathVariable Long codigo, @Valid @RequestBody Prato prato) {
+	public ResponseEntity<Pedido> pronto(@PathVariable Long codigo, @Valid @RequestBody Pedido pedido) {
 		try {
-			Prato pratoSalvo = pratoService.pronto(codigo, prato);
-			return ResponseEntity.ok(pratoSalvo);
+			Pedido pedidoSalvo = pratoService.pronto(codigo, pedido);
+			return ResponseEntity.ok(pedidoSalvo);
 		} catch (IllegalArgumentException e) {
 			return ResponseEntity.notFound().build();
 		}
+	}
+
+	@GetMapping(value = "/pedidos/{codigo}", params = {"resumo"})
+	@PreAuthorize("hasAuthority('ROLE_COZINHEIRA') or hasAuthority('ROLE_ADMIN')")
+	public Page<Pedido> resumirPedidos(Pedido pedido, Pageable pageable, @PathVariable Long codigo) {
+		return pratoService.resumirPedidos(pedido, pageable, codigo);
+	}
+
+	@GetMapping(value = "/vendas/{codigo}", params = {"resumo"})
+	@PreAuthorize("hasAuthority('ROLE_COZINHEIRA') or hasAuthority('ROLE_ADMIN')")
+	public Page<Venda> resumirVendas(Venda venda, Pageable pageable, @PathVariable Long codigo) {
+		return pratoService.resumirVendas(venda, pageable, codigo);
 	}
 	
 }
