@@ -1,9 +1,7 @@
 package com.igti.savetheplanetapi.savetheplanetapi.resource;
 
-import com.igti.savetheplanetapi.savetheplanetapi.model.Prato;
-import com.igti.savetheplanetapi.savetheplanetapi.repository.PratoRepository;
-import com.igti.savetheplanetapi.savetheplanetapi.repository.filter.PratoFilter;
-import com.igti.savetheplanetapi.savetheplanetapi.repository.projection.ResumoPrato;
+import com.igti.savetheplanetapi.savetheplanetapi.model.Pedido;
+import com.igti.savetheplanetapi.savetheplanetapi.model.Venda;
 import com.igti.savetheplanetapi.savetheplanetapi.service.EntregadorService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEventPublisher;
@@ -21,9 +19,6 @@ import javax.validation.Valid;
 public class EntregadorResource {
 
 	@Autowired
-	private PratoRepository pratoRepository;
-	
-	@Autowired
 	private EntregadorService entregadorService;
 	
 	@Autowired
@@ -32,18 +27,18 @@ public class EntregadorResource {
 	@Autowired
 	private MessageSource messageSource;
 
-	@GetMapping(value = "/resumir/{codigo}", params = {"resumo"})
+	@GetMapping(value = "/pedidos/{codigo}", params = {"resumo"})
 	@PreAuthorize("hasAuthority('ROLE_ENTREGADOR') or hasAuthority('ROLE_ADMIN')")
-	public Page<ResumoPrato> resumir(PratoFilter pratoFilter, Pageable pageable, @PathVariable Long codigo) {
-		return pratoRepository.resumirParaEntregador(pratoFilter, pageable, codigo);
+	public Page<Pedido> resumirPedidos(Pedido pedido, Pageable pageable, @PathVariable Long codigo) {
+		return entregadorService.resumirPedidos(pedido, pageable, codigo);
 	}
 	
-	@PutMapping("/entregar/{codigo}")
+	@PutMapping("/entregar/{codigo}/{codigoEntregador}")
 	@PreAuthorize("hasAuthority('ROLE_ENTREGADOR') or hasAuthority('ROLE_ADMIN')")
-	public ResponseEntity<Prato> entregar(@PathVariable Long codigo, @Valid @RequestBody Prato prato) {
+	public ResponseEntity<Pedido> entregar(@PathVariable Long codigo, @Valid @RequestBody Pedido pedido, @PathVariable Long codigoEntregador) {
 		try {
-			Prato pratoSalvo = entregadorService.entregar(codigo, prato);
-			return ResponseEntity.ok(pratoSalvo);
+			Pedido pedidoSalvo = entregadorService.entregar(codigo, pedido, codigoEntregador);
+			return ResponseEntity.ok(pedidoSalvo);
 		} catch (IllegalArgumentException e) {
 			return ResponseEntity.notFound().build();
 		}
@@ -51,13 +46,19 @@ public class EntregadorResource {
 
 	@PutMapping("/pagar/{codigo}")
 	@PreAuthorize("hasAuthority('ROLE_ENTREGADOR') or hasAuthority('ROLE_ADMIN')")
-	public ResponseEntity<Prato> pagar(@PathVariable Long codigo, @Valid @RequestBody Prato prato) {
+	public ResponseEntity<Pedido> pagar(@PathVariable Long codigo, @Valid @RequestBody Pedido pedido) {
 		try {
-			Prato pratoSalvo = entregadorService.pagar(codigo, prato);
-			return ResponseEntity.ok(pratoSalvo);
+			Pedido pedidoSalvo = entregadorService.pagar(codigo, pedido);
+			return ResponseEntity.ok(pedidoSalvo);
 		} catch (IllegalArgumentException e) {
 			return ResponseEntity.notFound().build();
 		}
+	}
+
+	@GetMapping(value = "/vendas/{codigo}", params = {"resumo"})
+	@PreAuthorize("hasAuthority('ROLE_ENTREGADOR') or hasAuthority('ROLE_ADMIN')")
+	public Page<Venda> resumirVendas(Venda venda, Pageable pageable, @PathVariable Long codigo) {
+		return entregadorService.resumirVendas(venda, pageable, codigo);
 	}
 	
 }

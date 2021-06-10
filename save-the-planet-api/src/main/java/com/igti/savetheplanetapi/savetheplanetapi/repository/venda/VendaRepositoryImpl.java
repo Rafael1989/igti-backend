@@ -19,6 +19,22 @@ public class VendaRepositoryImpl implements VendaRepositoryQuery {
 
 	@PersistenceContext
 	private EntityManager manager;
+
+	@Override
+	public List<Venda> getVendasByPedido(Long codigo) {
+		CriteriaBuilder builder = manager.getCriteriaBuilder();
+		CriteriaQuery<Venda> criteria = builder.createQuery(Venda.class);
+		Root<Venda> root = criteria.from(Venda.class);
+
+		criteria.select(root);
+
+		Predicate[] predicates = criarRestricoesByPedido(builder, root, codigo);
+		criteria.where(predicates);
+
+		TypedQuery<Venda> query = manager.createQuery(criteria);
+
+		return query.getResultList();
+	}
 	
 	@Override
 	public Page<Venda> resumirVendas(Venda venda, Pageable pageable, Long codigo) {
@@ -54,6 +70,23 @@ public class VendaRepositoryImpl implements VendaRepositoryQuery {
 		return new PageImpl<>(query.getResultList(), pageable, totalCozinheira(venda, codigo));
 	}
 
+	@Override
+	public Page<Venda> resumirVendasEntregador(Venda venda, Pageable pageable, Long codigo) {
+		CriteriaBuilder builder = manager.getCriteriaBuilder();
+		CriteriaQuery<Venda> criteria = builder.createQuery(Venda.class);
+		Root<Venda> root = criteria.from(Venda.class);
+
+		criteria.select(root);
+
+		Predicate[] predicates = criarRestricoesEntregador(venda, builder, root, codigo);
+		criteria.where(predicates);
+
+		TypedQuery<Venda> query = manager.createQuery(criteria);
+		adicionarRestricoesDePaginacao(query, pageable);
+
+		return new PageImpl<>(query.getResultList(), pageable, totalEntregador(venda, codigo));
+	}
+
 	private Predicate[] criarRestricoes(Venda venda, CriteriaBuilder builder,	Root<Venda> root, Long codigo) {
 		List<Predicate> predicates = new ArrayList<>();
 
@@ -64,12 +97,32 @@ public class VendaRepositoryImpl implements VendaRepositoryQuery {
 		return predicates.toArray(new Predicate[predicates.size()]);
 	}
 
+	private Predicate[] criarRestricoesByPedido(CriteriaBuilder builder,	Root<Venda> root, Long codigo) {
+		List<Predicate> predicates = new ArrayList<>();
+
+		Pedido pedido = new Pedido();
+		pedido.setCodigo(codigo);
+		predicates.add(builder.equal(root.get(Venda_.pedido), pedido));
+
+		return predicates.toArray(new Predicate[predicates.size()]);
+	}
+
 	private Predicate[] criarRestricoesCozinheira(Venda venda, CriteriaBuilder builder,	Root<Venda> root, Long codigo) {
 		List<Predicate> predicates = new ArrayList<>();
 
 		Usuario usuario = new Usuario();
 		usuario.setCodigo(codigo);
 		predicates.add(builder.equal(root.get(Venda_.cozinheira), usuario));
+
+		return predicates.toArray(new Predicate[predicates.size()]);
+	}
+
+	private Predicate[] criarRestricoesEntregador(Venda venda, CriteriaBuilder builder,	Root<Venda> root, Long codigo) {
+		List<Predicate> predicates = new ArrayList<>();
+
+		Usuario usuario = new Usuario();
+		usuario.setCodigo(codigo);
+		predicates.add(builder.equal(root.get(Venda_.entregador), usuario));
 
 		return predicates.toArray(new Predicate[predicates.size()]);
 	}
@@ -101,6 +154,18 @@ public class VendaRepositoryImpl implements VendaRepositoryQuery {
 		Root<Venda> root = criteria.from(Venda.class);
 
 		Predicate[] predicates = criarRestricoesCozinheira(venda, builder, root, codigo);
+		criteria.where(predicates);
+
+		criteria.select(builder.count(root));
+		return manager.createQuery(criteria).getSingleResult();
+	}
+
+	private Long totalEntregador(Venda venda, Long codigo) {
+		CriteriaBuilder builder = manager.getCriteriaBuilder();
+		CriteriaQuery<Long> criteria = builder.createQuery(Long.class);
+		Root<Venda> root = criteria.from(Venda.class);
+
+		Predicate[] predicates = criarRestricoesEntregador(venda, builder, root, codigo);
 		criteria.where(predicates);
 
 		criteria.select(builder.count(root));

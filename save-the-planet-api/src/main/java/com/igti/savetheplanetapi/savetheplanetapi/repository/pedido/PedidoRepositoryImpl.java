@@ -25,6 +25,23 @@ public class PedidoRepositoryImpl implements PedidoRepositoryQuery {
     private EntityManager manager;
 
     @Override
+    public Page<Pedido> resumirPedidosEntregador(Pedido pedido, Pageable pageable, Long codigo) {
+        CriteriaBuilder builder = manager.getCriteriaBuilder();
+        CriteriaQuery<Pedido> criteria = builder.createQuery(Pedido.class);
+        Root<Pedido> root = criteria.from(Pedido.class);
+
+        criteria.select(root);
+
+        Predicate[] predicates = criarRestricoesEntregador(pedido, builder, root, codigo);
+        criteria.where(predicates);
+
+        TypedQuery<Pedido> query = manager.createQuery(criteria);
+        adicionarRestricoesDePaginacao(query, pageable);
+
+        return new PageImpl<>(query.getResultList(), pageable, totalEntregador(pedido, codigo));
+    }
+
+    @Override
     public Page<Pedido> resumirPedidosCozinheira(Pedido pedido, Pageable pageable, Long codigo) {
         CriteriaBuilder builder = manager.getCriteriaBuilder();
         CriteriaQuery<Prato> criteria = builder.createQuery(Prato.class);
@@ -85,6 +102,18 @@ public class PedidoRepositoryImpl implements PedidoRepositoryQuery {
         return predicates.toArray(new Predicate[predicates.size()]);
     }
 
+    private Predicate[] criarRestricoesEntregador(Pedido pedido, CriteriaBuilder builder, Root<Pedido> root, Long codigo) {
+        List<Predicate> predicates = new ArrayList<>();
+
+        Predicate statusPronto = builder.equal(root.get(Pedido_.status), "PRONTO");
+        Usuario usuario = new Usuario();
+        usuario.setCodigo(codigo);
+		Predicate codigoEntregador = builder.equal(root.get(Pedido_.entregador), usuario);
+		predicates.add(builder.or(statusPronto, codigoEntregador));
+
+        return predicates.toArray(new Predicate[predicates.size()]);
+    }
+
     private void adicionarRestricoesDePaginacao(TypedQuery<?> query, Pageable pageable) {
         int paginaAtual = pageable.getPageNumber();
         int totalRegistrosPorPagina = pageable.getPageSize();
@@ -100,6 +129,18 @@ public class PedidoRepositoryImpl implements PedidoRepositoryQuery {
         Root<Pedido> root = criteria.from(Pedido.class);
 
         Predicate[] predicates = criarRestricoes(pedido, builder, root, codigo);
+        criteria.where(predicates);
+
+        criteria.select(builder.count(root));
+        return manager.createQuery(criteria).getSingleResult();
+    }
+
+    private Long totalEntregador(Pedido pedido, Long codigo) {
+        CriteriaBuilder builder = manager.getCriteriaBuilder();
+        CriteriaQuery<Long> criteria = builder.createQuery(Long.class);
+        Root<Pedido> root = criteria.from(Pedido.class);
+
+        Predicate[] predicates = criarRestricoesEntregador(pedido, builder, root, codigo);
         criteria.where(predicates);
 
         criteria.select(builder.count(root));
