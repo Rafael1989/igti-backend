@@ -54,6 +54,20 @@ public class VendaRepositoryImpl implements VendaRepositoryQuery {
 	}
 
 	@Override
+	public Page<Venda> resumirVendas(Venda venda, Pageable pageable) {
+		CriteriaBuilder builder = manager.getCriteriaBuilder();
+		CriteriaQuery<Venda> criteria = builder.createQuery(Venda.class);
+		Root<Venda> root = criteria.from(Venda.class);
+
+		criteria.select(root);
+
+		TypedQuery<Venda> query = manager.createQuery(criteria);
+		adicionarRestricoesDePaginacao(query, pageable);
+
+		return new PageImpl<>(query.getResultList(), pageable, total(venda));
+	}
+
+	@Override
 	public Page<Venda> resumirVendasCozinheira(Venda venda, Pageable pageable, Long codigo) {
 		CriteriaBuilder builder = manager.getCriteriaBuilder();
 		CriteriaQuery<Venda> criteria = builder.createQuery(Venda.class);
@@ -144,6 +158,15 @@ public class VendaRepositoryImpl implements VendaRepositoryQuery {
 		Predicate[] predicates = criarRestricoes(venda, builder, root, codigo);
 		criteria.where(predicates);
 		
+		criteria.select(builder.count(root));
+		return manager.createQuery(criteria).getSingleResult();
+	}
+
+	private Long total(Venda venda) {
+		CriteriaBuilder builder = manager.getCriteriaBuilder();
+		CriteriaQuery<Long> criteria = builder.createQuery(Long.class);
+		Root<Venda> root = criteria.from(Venda.class);
+
 		criteria.select(builder.count(root));
 		return manager.createQuery(criteria).getSingleResult();
 	}

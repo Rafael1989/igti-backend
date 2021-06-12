@@ -12,5 +12,6 @@ public interface PedidoRepositoryQuery {
 	public Page<Pedido> resumirPedidos(Pedido pedido, Pageable pageable, Long codigo);
 	public Page<Pedido> resumirPedidosCozinheira(Pedido pedido, Pageable pageable, Long codigo);
 	public Page<Pedido> resumirPedidosEntregador(Pedido pedido, Pageable pageable, Long codigo);
+	public Page<Pedido> resumirPedidos(Pedido pedido, Pageable pageable);
 
 }

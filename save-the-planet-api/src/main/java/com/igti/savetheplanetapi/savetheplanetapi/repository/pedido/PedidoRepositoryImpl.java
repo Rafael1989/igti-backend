@@ -25,6 +25,20 @@ public class PedidoRepositoryImpl implements PedidoRepositoryQuery {
     private EntityManager manager;
 
     @Override
+    public Page<Pedido> resumirPedidos(Pedido pedido, Pageable pageable) {
+        CriteriaBuilder builder = manager.getCriteriaBuilder();
+        CriteriaQuery<Pedido> criteria = builder.createQuery(Pedido.class);
+        Root<Pedido> root = criteria.from(Pedido.class);
+
+        criteria.select(root);
+
+        TypedQuery<Pedido> query = manager.createQuery(criteria);
+        adicionarRestricoesDePaginacao(query, pageable);
+
+        return new PageImpl<>(query.getResultList(), pageable, total(pedido));
+    }
+
+    @Override
     public Page<Pedido> resumirPedidosEntregador(Pedido pedido, Pageable pageable, Long codigo) {
         CriteriaBuilder builder = manager.getCriteriaBuilder();
         CriteriaQuery<Pedido> criteria = builder.createQuery(Pedido.class);
@@ -130,6 +144,15 @@ public class PedidoRepositoryImpl implements PedidoRepositoryQuery {
 
         Predicate[] predicates = criarRestricoes(pedido, builder, root, codigo);
         criteria.where(predicates);
+
+        criteria.select(builder.count(root));
+        return manager.createQuery(criteria).getSingleResult();
+    }
+
+    private Long total(Pedido pedido) {
+        CriteriaBuilder builder = manager.getCriteriaBuilder();
+        CriteriaQuery<Long> criteria = builder.createQuery(Long.class);
+        Root<Pedido> root = criteria.from(Pedido.class);
 
         criteria.select(builder.count(root));
         return manager.createQuery(criteria).getSingleResult();
